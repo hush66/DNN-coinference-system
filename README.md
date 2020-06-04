@@ -1,1 +1,1 @@
-# DNN-coinference-system
+# A-pipeline-DNN-co-inference-system
