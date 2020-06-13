@@ -1,12 +1,11 @@
 import pypeln as pl
 import time
-import os
 import paramiko
 import thriftpy2 as thriftpy
 
 from thriftpy2.rpc import make_client
 from Optimizer import *
-from model import get_test_data
+
 from DNN_inference import infer
 from co_inference_config import *
 from coinference_utils import  *
@@ -14,7 +13,7 @@ from coinference_utils import  *
 import sys
 sys.path.append('../')
 from model import get_network
-
+from model import get_test_data
 
 def generation_stage(img_tag):
     time.sleep(1/Q)

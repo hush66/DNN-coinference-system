@@ -1,11 +1,9 @@
 import torch.nn as nn
-import sys
+import sys, os
 
-from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
-
-sys.path.append('..')
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from branchynet.net import BranchyNet
-
+from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
 
 # Model layer presets
 def norm():

@@ -4,7 +4,7 @@ import torch
 import os
 from thriftpy2.rpc import make_server
 from DNN_inference import infer
-from utils import *
+from coinference_utils import *
 from co_inference_config import *
 
 import sys

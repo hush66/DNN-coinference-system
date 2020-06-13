@@ -1,10 +1,12 @@
+import os, sys
 import numpy as np
-import torch, torchvision
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from scipy.stats import entropy
-from branchynet.utils import *
+from utils import *
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
 
 
