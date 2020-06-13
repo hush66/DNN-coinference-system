@@ -12,7 +12,7 @@ def entropy_gpu(x):
     return cuda.cupy.sum(vec, 1)
 
 
-def train(branchyNet, dataloader, num_epoch=20, main=False):
+def train(branchyNet, dataloader, batchsize=100, num_epoch=20, main=False):
     losses_list = []
     acc_list = []
     epoch_list = range(num_epoch)

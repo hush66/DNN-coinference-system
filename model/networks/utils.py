@@ -21,7 +21,7 @@ class Branch(nn.Module):
     def __init__(self, layer):
         super(Branch, self).__init__()
         if (layer is not None):
-            self.layer = nn.Sequential(*layer)
+            self.layer = nn.ModuleList(layer)
         else:
             self.layer = layer
 
@@ -29,7 +29,9 @@ class Branch(nn.Module):
         if (self.layer is None):
             return x
         else:
-            return self.layer(x)
+            for i in range(len(self.layer)):
+                x = self.layer[i](x)
+            return x
 
 
 class Net(nn.Module):

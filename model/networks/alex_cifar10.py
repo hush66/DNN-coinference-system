@@ -1,7 +1,10 @@
-from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
-from .utils import *
-from ..branchynet.net import BranchyNet
 import torch.nn as nn
+import sys
+
+from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
+
+sys.path.append('..')
+from branchynet.net import BranchyNet
 
 
 # Model layer presets

@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from scipy.stats import entropy
-from .utils import *
+from branchynet.utils import *
 from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
 
 
@@ -264,7 +264,7 @@ class BranchyNet:
                 l_main = []
                 for l in self.network[:i]:
                     if not isinstance(l, Branch): l_main.append(l)
-                branch_model = DNN(l_main + [layer])
+                branch_model = DNN(l_main + layer.layer)
                 models.append(branch_model)
                 cont += 1
         return models
