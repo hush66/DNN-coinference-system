@@ -52,6 +52,7 @@ def upload_stage(part_result):
 def server_exe_stage(partition_config):
     print('server execution')
     b, p, c = partition_config
+    print(b, p, c)
     tag = rpc_client.partition(b, p, c)
     print('server finish')
     return tag

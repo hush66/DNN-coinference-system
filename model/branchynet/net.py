@@ -4,11 +4,11 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from scipy.stats import entropy
-from utils import *
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from networks.utils import Flatten, PrintLayer, Branch, calculate_entropy
-
+from branchynet.utils import *
 
 class DNN(nn.Module):
     """
