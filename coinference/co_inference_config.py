@@ -7,11 +7,12 @@ Q = 2
 B = 100 * 1024
 
 #HOST = '192.168.199.127'
-HOST = '192.168.199.237'
+HOST = '10.1.1.171'
 PORT = 22
-USER = 'pi'
-PASSWORD = 'raspberry'
-#LOCAL_DIR = './intermediate_data/'
-LOCAL_DIR = 'C:/Users/Hu/Desktop/Workstation/DNN-coinference-system/coinference/'
+USER = 'husheng'
+PASSWORD = 'husheng'
+LOCAL_DIR = './intermediate_data/'
+#LOCAL_DIR = 'C:/Users/Hu/Desktop/Workstation/DNN-coinference-system/coinference/'
 #REMOTE_DIR = 'C:/Users/Hu/Desktop/Workstation/DNN-coinference-system/coinference/recevied/intermediate_data'
-REMOTE_DIR = '/home/pi/WorkStation/'
+REMOTE_DIR = '/home/husheng/DNN-coinference-system/coinference/intermediate_data/'
+

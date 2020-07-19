@@ -1,6 +1,7 @@
 import pypeln as pl
 import time
 import paramiko
+import asyncio
 import thriftpy2 as thriftpy
 
 from thriftpy2.rpc import make_client
@@ -15,13 +16,13 @@ sys.path.append('../')
 from model import get_network
 from model import get_test_data
 
-def generation_stage(img_tag):
-    time.sleep(1/Q)
+async def generation_stage(img_tag):
+    await asyncio.sleep(1/Q)
     print('generate frame...')
     return img_tag
 
 
-def device_exe_stage(img_tag):
+async def device_exe_stage(img_tag):
     print('Device start process')
     b, p, c = optimizer.overallOptimization(B)
     img, tag = img_tag
@@ -36,7 +37,7 @@ def device_exe_stage(img_tag):
     return file_name, b, p, c
 
 
-def upload_stage(part_result):
+async def upload_stage(part_result):
     filename, b, p, c = part_result
     print('upload stage')
     print(filename)
@@ -49,7 +50,7 @@ def upload_stage(part_result):
     return b, p, c
 
 
-def server_exe_stage(partition_config):
+async def server_exe_stage(partition_config):
     print('server execution')
     b, p, c = partition_config
     print(b, p, c)
@@ -60,7 +61,7 @@ def server_exe_stage(partition_config):
 
 def client_start():
     partition_thrift = thriftpy.load('partition.thrift', module_name='partition_thrift')
-    return make_client(partition_thrift.Partition, '127.0.0.1', 6000)
+    return make_client(partition_thrift.Partition, '10.1.1.171', 8888)
 
 
 if __name__ == '__main__':
@@ -73,7 +74,6 @@ if __name__ == '__main__':
     sf = paramiko.Transport((HOST, PORT))
     sf.connect(username=USER, password=PASSWORD)
     sftp = paramiko.SFTPClient.from_transport(sf)
-    rpc_client = client_start()
 
     def on_start():
         return dict(optimizer=optimizer, branchyNet=branchyNet, sftp=sftp, rpc_client = rpc_client)
@@ -81,19 +81,21 @@ if __name__ == '__main__':
     # init data to be processed
     dataloader = get_test_data()
     print('Start process data...')
-    data = [dataloader.next() for _ in range(3)]
+    data = [dataloader.next() for _ in range(100)]
     print('Finsh process data...')
+    rpc_client = client_start()
 
     start_time = time.time()
     stage = (
             data
-            | pl.thread.map(generation_stage, workers=1, maxsize=1)
-            | pl.thread.map(device_exe_stage, workers=1, maxsize=1, on_start=on_start)
-            | pl.thread.map(upload_stage, workers=1, maxsize=1, on_start=on_start)
-            | pl.thread.map(server_exe_stage, workers=1, maxsize=1, on_start=on_start)
+            | pl.task.map(generation_stage, workers=1, maxsize=1)
+            | pl.task.map(device_exe_stage, workers=1, maxsize=1, on_start=on_start)
+            | pl.task.map(upload_stage, workers=1, maxsize=1, on_start=on_start)
+            | pl.task.map(server_exe_stage, workers=1, maxsize=1, on_start=on_start)
             | list
     )
     end_time = time.time()
     print(end_time - start_time)
+    print(stage)
 
     sf.close()

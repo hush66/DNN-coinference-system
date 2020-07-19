@@ -1,4 +1,3 @@
-from config import *
 from offline_profile import *
 from pulp import *
 import numpy as np
