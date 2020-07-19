@@ -42,7 +42,7 @@ for d in width:
 
         start_time = time.time()
         input_data = relu(input_data)
-        stop_time = time.time()
+        end_time = time.time()
 
         exe_time.append(end_time - start_time)
 relu_dataframe = pd.DataFrame({'input_data_size': input_data_size, 'time': exe_time})
@@ -62,7 +62,7 @@ for w in width:
             for c in channel:
                 input_size = w * w * c
                 output_size = (w - k) // 2 + 1
-                pooling = nn.MaxPool2(k, stride=s)
+                pooling = nn.MaxPool2d(k, stride=s)
                 input_data = torch.rand(1, c, w, w)
 
                 start_time = time.time()
@@ -89,7 +89,7 @@ for w in width:
 
         start_time = time.time()
         input_data = lrn(input_data)
-        stop_time = time.time()
+        end_time = time.time()
 
         input_data_size.append(c * w * w)
         exe_time.append(end_time - start_time)
@@ -129,5 +129,5 @@ for i in input_data_size:
 
     exe_time.append(end_time - start_time)
 dropout_dataframe = pd.DataFrame({'input_data_size': input_data_size, 'time': exe_time})
-dropout.to_csv('./profile/dropout.csv', index=False, sep=',')
+exe_time.to_csv('./profile/dropout.csv', index=False, sep=',')
 
