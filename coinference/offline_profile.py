@@ -152,7 +152,7 @@ class TimePredictor:
     def linear(self, input_data_size, output_data_size):
         pass
 
-    def conv(self, feature_map_amount, compution_each_pixel):
+    def conv(self, computition_amount):
         pass
 
     def getDataInfo(self, branch_id):
@@ -177,7 +177,7 @@ class TimePredictor:
 
             if layer_name == 'conv':
                 compution_each_pixel = params['out_channels'] * (params['kernal_size'] / params['stride']) ** 2
-                exe_time.append(self.conv(input_data_size, compution_each_pixel))
+                exe_time.append(self.conv(input_data_size*compution_each_pixel))
             elif layer_name == 'pool':
                 exe_time.append(self.pool(input_data_size, output_data_size))
             elif layer_name == 'lrn':
@@ -204,23 +204,22 @@ class DeviceTimePredictor(TimePredictor):
 
     # time predict function got from regression model
     def lrn(self, data_size):
-        return 9.013826444839453e-08 * data_size + 0.0013616842338199375
+        return 2.41040419e-07 * data_size + 0.00195032
 
     def pool(self, input_data_size, output_data_size):
-        return 1.1864462944013584e-08 * input_data_size - 2.031421398089179e-09 * output_data_size + 0.0001234705954153948
+        return 1.53823128e-07 * input_data_size - 3.95475651e-06 * output_data_size - 0.0002605685722191359
 
     def relu(self, input_data_size):
-        return 6.977440389615429e-09 * input_data_size + 0.0005612587990019447
+        return 1.10691116e-08 * input_data_size + 0.00045149
 
     def dropout(self, input_data_size):
-        return 9.341929545685408e-08 * input_data_size + 0.0007706006740869353
+        return -6.26868128e-07 * input_data_size +0.00645282
 
     def linear(self, input_data_size, output_data_size):
-        return 1.1681471979101294e-08 * input_data_size + 0.00029824333961563884 * output_data_size - 0.0011913997548602204
+        return 5.00007390e-06 * input_data_size + 6.15883023e-05 * output_data_size - 0.015043842514137852
 
-    def conv(self, feature_map_amount, compution_each_pixel):
-        # compution_each_pixel stands for (filter size / stride)^2 * (number of filters)
-        return 0.00020423363723714956 * feature_map_amount + 4.2077298118910815e-11 * compution_each_pixel + 0.025591776113868925
+    def conv(self, computition_amount):
+        return 1.43990934e-09 * computition_amount + 0.01242811
 
 
 ###############################################
@@ -232,21 +231,21 @@ class ServerTimePredictor(TimePredictor):
 
     # time predict function got from regression model
     def lrn(self, data_size):
-        return 2.111544033139625e-08 * data_size + 0.0285872721707483
+        return 1.23390253e-08 * data_size + 7.49573351e-05
 
     def pool(self, input_data_size, output_data_size):
-        return -3.08201145e-10 * input_data_size + 1.19458883e-09 * output_data_size - 0.0010152380964514613
+        return 1.45752786e-08 * input_data_size - 7.00468225e-06 * output_data_size - 5.201232083731043e-05
 
     def relu(self, input_data_size):
-        return 2.332339368254984e-09 * input_data_size + 0.005070494191853819
+        return 5.57920434e-10 * input_data_size - 1.32500774e-05
 
     def dropout(self, input_data_size):
-        return 3.962833398808942e-09 * input_data_size + 0.015458175165054516
+        return 1.04186335e-09 * input_data_size + 4.42568936e-05
 
     def linear(self, input_data_size, output_data_size):
-        return 9.843676646891836e-12 * input_data_size + 4.0100716666407315e-07 * output_data_size + 0.015619779485748695
+        return 4.11475976e-08 * input_data_size + 5.44218793e-07 * output_data_size - 8.44561771318189e-05
 
-    def conv(self, feature_map_amount, compution_each_pixel):
+    def conv(self, computition_amount):
         # compution_each_pixel stands for (filter size / stride)^2 * (number of filters)
-        return 1.513486447521604e-06 * feature_map_amount + 4.4890001480985655e-12 * compution_each_pixel + 0.009816023641653768
+        return 5.3933432e-12 * computition_amount + 0.00034535
 

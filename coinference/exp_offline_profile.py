@@ -25,7 +25,7 @@ for d in feature_map:
                 end_time = time.time()
 
                 exe_time.append(end_time - start_time)
-                computation.append(d * d * c * (f / s) ** 2 * j)
+                computation.append(d * d * c * ((f / s) ** 2) * j)
 
 conv_dataframe = pd.DataFrame({'total_computation': computation, 'time': exe_time})
 conv_dataframe.to_csv("./profile/Conv.csv", index=False, sep=',')
@@ -44,6 +44,7 @@ for d in width:
         input_data = relu(input_data)
         end_time = time.time()
 
+        input_data_size.append(d*d*c)
         exe_time.append(end_time - start_time)
 relu_dataframe = pd.DataFrame({'input_data_size': input_data_size, 'time': exe_time})
 relu_dataframe.to_csv('./profile/ReLU.csv', index=False, sep=',')
@@ -51,7 +52,7 @@ relu_dataframe.to_csv('./profile/ReLU.csv', index=False, sep=',')
 # Pooling
 input_data_size, output_data_size, exe_time = [], [], []
 
-width = [32, 16, 8, 4, 2, 227, 114]
+width = [32, 16, 8, 4, 227, 114]
 channel = [3, 32, 64, 96, 128]
 kernal = [3, 2]
 stride = [1, 2]
@@ -99,19 +100,23 @@ lrn_dataframe.to_csv('./profile/lrn.csv', index=False, sep=',')
 # FC
 input_data_size, output_data_size, exe_time = [], [], []
 
-configuration = [(1024, 512), (1024, 256), (512, 256), (256, 128), (128, 10), (64, 10), (4096, 1024)]
+fc_in = [1024, 512, 256, 128, 4096, 2048, 196, 6000, 8000]
+fc_out = [512, 256, 128, 10, 1024, 196, 1024, 64]
 
-for i, o in configuration:
-    input_data = torch.rand(1, i)
-    ln = nn.Linear(i, o)
+for i in fc_in:
+    for o in fc_out:
+        if i < o: continue
+        input_data = torch.rand(1, i)
+        ln = nn.Linear(i, o)
 
-    start_time = time.time()
-    input_data = ln(input_data)
-    end_time = time.time()
+        start_time = time.time()
+        input_data = ln(input_data)
+        end_time = time.time()
 
-    input_data_size.append(i)
-    output_data_size.append(o)
-    exe_time.append(end_time - start_time)
+        input_data_size.append(i)
+        output_data_size.append(o)
+        exe_time.append(end_time - start_time)
+
 fc_dataframe = pd.DataFrame(
     {'input_data_size': input_data_size, 'output_data_size': output_data_size, 'time': exe_time})
 fc_dataframe.to_csv('./profile/fc.csv', index=False, sep=',')
@@ -129,5 +134,5 @@ for i in input_data_size:
 
     exe_time.append(end_time - start_time)
 dropout_dataframe = pd.DataFrame({'input_data_size': input_data_size, 'time': exe_time})
-exe_time.to_csv('./profile/dropout.csv', index=False, sep=',')
+dropout_dataframe.to_csv('./profile/dropout.csv', index=False, sep=',')
 

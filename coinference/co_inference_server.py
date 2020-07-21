@@ -19,7 +19,7 @@ branchyNet.testing()
 
 def server_start():
     partition_thrift = thriftpy.load('partition.thrift', module_name='partition_thrift')
-    server = make_server(partition_thrift.Partition, Dispacher(), '127.0.0.1', 6000)
+    server = make_server(partition_thrift.Partition, Dispacher(), '0.0.0.0', 8888)
     print('Thriftpy server is listening...')
     server.serve()
 
