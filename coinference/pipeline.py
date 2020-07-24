@@ -81,7 +81,7 @@ if __name__ == '__main__':
     # init data to be processed
     dataloader = get_test_data()
     print('Start process data...')
-    data = [dataloader.next() for _ in range(100)]
+    data = [dataloader.next() for _ in range(1)]
     print('Finsh process data...')
     rpc_client = client_start()
 
