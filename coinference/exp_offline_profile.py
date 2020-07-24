@@ -10,14 +10,14 @@ exe_time = []
 feature_map = [32, 16, 8, 4, 2]
 input_channel = [3, 32, 64, 96, 128]
 output_f_number = [3, 32, 64, 96, 128]
-filter_stride = [(3, 1), (5, 1), (7, 1)]
+filter_stride = [(3, 1, 1), (5, 1, 2), (7, 1, 3)]
 
 for d in feature_map:
     for c in input_channel:
         for j in output_f_number:
-            for f, s in filter_stride:
+            for f, s, p in filter_stride:
                 if d < f: continue
-                conv = nn.Conv2d(c, j, f, stride=s, padding=2)
+                conv = nn.Conv2d(c, j, f, stride=s, padding=p)
                 input_data = torch.rand(1, c, d, d)
 
                 start_time = time.time()
@@ -34,7 +34,7 @@ conv_dataframe.to_csv("./profile/Conv.csv", index=False, sep=',')
 input_data_size = []
 exe_time = []
 
-width, channel = [32, 16, 8, 4, 2, 64, 128, 227], [3, 32, 64, 128, 192]
+width, channel = [32, 16, 8, 4, 2, 64, 128, 227], [3, 32, 64, 128, 192, 256]
 for d in width:
     for c in channel:
         input_data = torch.rand(1, c, d, d)
@@ -52,17 +52,18 @@ relu_dataframe.to_csv('./profile/ReLU.csv', index=False, sep=',')
 # Pooling
 input_data_size, output_data_size, exe_time = [], [], []
 
-width = [32, 16, 8, 4, 227, 114]
-channel = [3, 32, 64, 96, 128]
-kernal = [3, 2]
+width = [32, 16, 8, 4, 227, 114, 64, 512, 1024]
+channel = [3, 32, 64, 96, 128, 256]
+kernal = [3, 2, 5]
 stride = [1, 2]
 
 for w in width:
     for k in kernal:
         for s in stride:
             for c in channel:
+                if w < k: continue
                 input_size = w * w * c
-                output_size = (w - k) // 2 + 1
+                output_size = c * ((w - k) // s + 1)**2
                 pooling = nn.MaxPool2d(k, stride=s)
                 input_data = torch.rand(1, c, w, w)
 
