@@ -34,7 +34,7 @@ conv_dataframe.to_csv("./profile/Conv.csv", index=False, sep=',')
 input_data_size = []
 exe_time = []
 
-width, channel = [32, 16, 8, 4, 2, 64, 128, 227], [3, 32, 64, 128, 192, 256]
+width, channel = [1, 32, 16, 8, 4, 2, 64, 128, 227], [3, 32, 64, 128, 192, 96]
 for d in width:
     for c in channel:
         input_data = torch.rand(1, c, d, d)
@@ -52,10 +52,10 @@ relu_dataframe.to_csv('./profile/ReLU.csv', index=False, sep=',')
 # Pooling
 input_data_size, output_data_size, exe_time = [], [], []
 
-width = [32, 16, 8, 4, 227, 114, 64, 512, 1024]
-channel = [3, 32, 64, 96, 128, 256]
-kernal = [3, 2, 5]
-stride = [1, 2]
+width = [32, 16, 8, 4, 227, 114, 64]
+channel = [3, 32, 64, 96, 128]
+kernal = [2]
+stride = [2]
 
 for w in width:
     for k in kernal:

@@ -207,7 +207,7 @@ class DeviceTimePredictor(TimePredictor):
         return 2.41040419e-07 * data_size + 0.00195032
 
     def pool(self, input_data_size, output_data_size):
-        return 1.53823128e-07 * input_data_size - 3.95475651e-06 * output_data_size - 0.0002605685722191359
+        return 8.45890409e-09 * input_data_size + 3.45212848e-07 * output_data_size - 0.00033475269675617425
 
     def relu(self, input_data_size):
         return 1.10691116e-08 * input_data_size + 0.00045149
@@ -234,7 +234,7 @@ class ServerTimePredictor(TimePredictor):
         return 1.23390253e-08 * data_size + 7.49573351e-05
 
     def pool(self, input_data_size, output_data_size):
-        return 1.45752786e-08 * input_data_size - 7.00468225e-06 * output_data_size - 5.201232083731043e-05
+        return 1.17238505e-09 * input_data_size + 3.45367317e-08 * output_data_size - 0.001457154439502395
 
     def relu(self, input_data_size):
         return 5.57920434e-10 * input_data_size - 1.32500774e-05

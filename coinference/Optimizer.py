@@ -36,17 +36,15 @@ class Optimizer:
         opt_pp = -1
         total_time = 1<<10
 
+        print("device exe time", device_layers_exe_time)
+        print("server exe time: ", server_layer_exe_time)
+
         # p stands for partition point
         for pp in range(layer_number):
             device_exe_time = sum(device_layers_exe_time[:pp+1])
             server_exe_time = sum(server_layer_exe_time[pp+1:])
             trans_time = data_size_table[pp] / B
             
-            print("partition point: ", pp)
-            print("device time: ", device_exe_time)
-            print("server time: ", server_exe_time)
-            print("trans time: ", trans_time)
-
             # check if result in congestion
             if device_exe_time > self.interval or server_exe_time > self.interval or trans_time > self.interval:
                 continue
