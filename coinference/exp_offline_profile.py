@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.init
 import torch
 import pandas as pd
 import time
@@ -34,7 +35,7 @@ conv_dataframe.to_csv("./profile/Conv.csv", index=False, sep=',')
 input_data_size = []
 exe_time = []
 
-width, channel = [1, 32, 16, 8, 4, 2, 64, 128, 227], [3, 32, 64, 128, 192, 96]
+width, channel = [32, 16, 64, 128, 227], [3, 32, 64, 128, 192, 96]
 for d in width:
     for c in channel:
         input_data = torch.rand(1, c, d, d)
@@ -101,22 +102,21 @@ lrn_dataframe.to_csv('./profile/lrn.csv', index=False, sep=',')
 # FC
 input_data_size, output_data_size, exe_time = [], [], []
 
-fc_in = [1024, 512, 256, 128, 4096, 2048, 196, 6000, 8000]
-fc_out = [512, 256, 128, 10, 1024, 196, 1024, 64]
+configuration = [(1024, 512), (1024, 256), (512, 256), (256, 128), (128, 10), (64, 10)]
 
-for i in fc_in:
-    for o in fc_out:
-        if i < o: continue
-        input_data = torch.rand(1, i)
-        ln = nn.Linear(i, o)
+for i, o in configuration:
+    input_data = torch.rand(1, i)
+    ln = nn.Linear(i, o)
+    nn.init.xavier_uniform(ln.weight)
+    nn.init.constant(ln.bias, 0.1)
 
-        start_time = time.time()
-        input_data = ln(input_data)
-        end_time = time.time()
+    start_time = time.time()
+    input_data = ln(input_data)
+    end_time = time.time()
 
-        input_data_size.append(i)
-        output_data_size.append(o)
-        exe_time.append(end_time - start_time)
+    input_data_size.append(i)
+    output_data_size.append(o)
+    exe_time.append(end_time - start_time)
 
 fc_dataframe = pd.DataFrame(
     {'input_data_size': input_data_size, 'output_data_size': output_data_size, 'time': exe_time})

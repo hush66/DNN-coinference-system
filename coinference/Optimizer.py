@@ -36,8 +36,8 @@ class Optimizer:
         opt_pp = -1
         total_time = 1<<10
 
-        print("device exe time", device_layers_exe_time)
-        print("server exe time: ", server_layer_exe_time)
+        print("device exe time", sum(device_layers_exe_time))
+        print("server exe time: ", sum(server_layer_exe_time))
 
         # p stands for partition point
         for pp in range(layer_number):
