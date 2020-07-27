@@ -216,7 +216,7 @@ class DeviceTimePredictor(TimePredictor):
         return 2.81737324e-07 * input_data_size + 0.00024632
 
     def linear(self, input_data_size, output_data_size):
-        return 3.08453532e-06 * input_data_size + 1.10651626e-05 * output_data_size - -0.0009836842616360556
+        return 3.08453532e-06 * input_data_size + 1.10651626e-05 * output_data_size - 0.0009836842616360556
 
     def conv(self, computition_amount):
         return 1.43990934e-09 * computition_amount + 0.01242811
