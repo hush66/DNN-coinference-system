@@ -36,9 +36,6 @@ class Optimizer:
         opt_pp = -1
         total_time = 1<<10
 
-        print("device exe time", device_layers_exe_time)
-        print("server exe time: ", server_layer_exe_time)
-
         # p stands for partition point
         for pp in range(layer_number):
             device_exe_time = sum(device_layers_exe_time[:pp+1])
@@ -53,7 +50,6 @@ class Optimizer:
             if cur_total_time < total_time:
                 total_time = cur_total_time
                 opt_pp = pp
-                print("Updated!!!!!!!!!!!!!!!!!!!", pp)
 
         return (self.default_branch_id, opt_pp, 0)
 
@@ -118,12 +114,95 @@ class Optimizer:
         b, p, c = self.ILP(B)
         if b == -1:
             print('You have to reduce sampling rate.')
-            return (-1, -1, -1)
-        return (b, p, c)
+            return -1, -1, -1
+        return b, p, c
+
 
     def overallOptimization(self, B):
         main_b, opt_pp, default_c = self.LWO(B)
-        print("--------------",main_b, opt_pp, default_c, "------------------")
         if opt_pp == -1:
             return self.HWO(B)
-        return (main_b, opt_pp, default_c)
+        return main_b, opt_pp, default_c
+
+
+    def edgent_optimization(self, B):
+        """
+        optimization algorithm for edgent
+        Args:
+            B: current bandwidth
+        Returns:
+            exit point and partition point
+        """
+        layer_numbers = [len(branch) for branch in self.branches]
+        device_exe_time = self.device_time_predictor.each_branches_exe_time
+        server_exe_time = self.server_time_predictor.each_branches_exe_time
+        data_size_table = self.model_config.branches_output_data_size
+
+        opt_pp = -1
+        opt_ep = -1
+        total_time = 1 << 10
+
+        # p stands for partition point
+        for branch_id in range(len(self.branches)-1, -1, -1):
+            for layer_id in range(layer_numbers[branch_id]):
+                device_exe_time = sum(device_exe_time[branch_id][:layer_id+1])
+                server_exe_time = sum(server_exe_time[branch_id][layer_id+1:])
+                trans_time = data_size_table[branch_id][layer_id] / B
+
+                cur_total_time = device_exe_time + server_exe_time + trans_time
+                if cur_total_time < total_time:
+                    total_time = cur_total_time
+                    opt_pp, opt_ep = layer_id, branch_id
+        return opt_ep, opt_pp
+
+
+    def jalad_optimization(self, B):
+        """
+        optimization algorithm for JALAD
+        Args:
+            B: current bandwidth
+        Returns:
+            partition point
+
+        """
+        main_branch_info = self.model_config.getLayerInfo(self.default_branch_id)
+        layer_number = len(main_branch_info)
+        device_layers_exe_time = self.device_time_predictor.getExeTime(self.default_branch_id)
+        server_layer_exe_time = self.server_time_predictor.getExeTime(self.default_branch_id)
+        data_size_table = self.model_config.getDataSizeTable(self.default_branch_id)
+
+        c_list = [c for c in self.quantization_bits]
+
+        opt_pp = -1
+        quantization_bit = 32
+        total_time = 1 << 10
+
+        # p stands for partition point
+        for qb in c_list:
+            for pp in range(layer_number):
+                device_exe_time = sum(device_layers_exe_time[:pp + 1])
+                server_exe_time = sum(server_layer_exe_time[pp + 1:])
+                trans_time = data_size_table[pp] / (B * (32 / qb))
+
+                # check if result in congestion
+                if device_exe_time > self.interval or server_exe_time > self.interval or trans_time > self.interval:
+                    continue
+                cur_total_time = device_exe_time + server_exe_time + trans_time
+                if cur_total_time < total_time:
+                    total_time = cur_total_time
+                    opt_pp = pp
+                    quantization_bit = qb
+            if opt_pp != -1:
+                return opt_pp, quantization_bit
+
+        for pp in range(layer_number):
+            device_exe_time = sum(device_layers_exe_time[:pp + 1])
+            server_exe_time = sum(server_layer_exe_time[pp + 1:])
+            trans_time = data_size_table[pp] / (B * 4)
+            cur_total_time = device_exe_time + server_exe_time + trans_time
+            if cur_total_time < total_time:
+                total_time = cur_total_time
+                opt_pp = pp
+                quantization_bit = 8
+        return opt_pp, quantization_bit
+
