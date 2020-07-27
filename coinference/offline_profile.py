@@ -207,16 +207,16 @@ class DeviceTimePredictor(TimePredictor):
         return 2.41040419e-07 * data_size + 0.00195032
 
     def pool(self, input_data_size, output_data_size):
-        return 8.45890409e-09 * input_data_size + 3.45212848e-07 * output_data_size - 0.00033475269675617425
+        return 8.41658333e-09 * input_data_size + 3.04164861e-07 * output_data_size + 0.00022211825020274079
 
     def relu(self, input_data_size):
-        return 1.10691116e-08 * input_data_size + 0.00045149
+        return 1.10691116e-08 * input_data_size + 0.00130738
 
     def dropout(self, input_data_size):
-        return -6.26868128e-07 * input_data_size +0.00645282
+        return 2.81737324e-07 * input_data_size + 0.00024632
 
     def linear(self, input_data_size, output_data_size):
-        return 5.00007390e-06 * input_data_size + 6.15883023e-05 * output_data_size - 0.015043842514137852
+        return 3.08453532e-06 * input_data_size + 1.10651626e-05 * output_data_size - -0.0009836842616360556
 
     def conv(self, computition_amount):
         return 1.43990934e-09 * computition_amount + 0.01242811
@@ -234,16 +234,16 @@ class ServerTimePredictor(TimePredictor):
         return 1.23390253e-08 * data_size + 7.49573351e-05
 
     def pool(self, input_data_size, output_data_size):
-        return 1.17238505e-09 * input_data_size + 3.45367317e-08 * output_data_size - 0.001457154439502395
+        return -7.13095149e-09  * input_data_size + 4.89582413e-08 * output_data_size + 2.9531218535532294e-05
 
     def relu(self, input_data_size):
-        return 5.57920434e-10 * input_data_size - 1.32500774e-05
+        return 5.57920434e-10 * input_data_size
 
     def dropout(self, input_data_size):
         return 1.04186335e-09 * input_data_size + 4.42568936e-05
 
     def linear(self, input_data_size, output_data_size):
-        return 4.11475976e-08 * input_data_size + 5.44218793e-07 * output_data_size - 8.44561771318189e-05
+        return -5.85395390e-08 * input_data_size + 4.03370162e-07 * output_data_size + 1.4968936621889093e-05
 
     def conv(self, computition_amount):
         # compution_each_pixel stands for (filter size / stride)^2 * (number of filters)
