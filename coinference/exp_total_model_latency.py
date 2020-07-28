@@ -40,7 +40,9 @@ if __name__ == "__main__":
     branchyNet.testing()
 
     dataloader = get_test_data()
-    img, tag = dataloader.next()
-
-    latency = get_latency(branchyNet, img)
-    print(latency)
+    
+    latency = 0
+    for _ in range(10):
+        img, tag = dataloader.next()
+        latency += get_latency(branchyNet, img)
+    print(latency / 10)

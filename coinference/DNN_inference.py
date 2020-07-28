@@ -59,7 +59,7 @@ def infer_main_branch(branchy_net, inputs):
         inference result
     """
     main_branch = branchy_net.main
-    for layer in main_branch:
+    for layer in main_branch.layers:
         inputs = layer(inputs)
     return inputs
 
