@@ -1,7 +1,7 @@
 import os
 
 MODEL_LOCATION = os.path.join('..', 'model', 'trained_model', 'BranchyNet.pt')
-INPUT_DATA_INFO = (32, 3)
+INPUT_DATA_INFO = (227, 3)
 QUANTIZATION_BITS = [32, 16, 8]
 Q = 30
 B = 200 * 1024

@@ -36,6 +36,7 @@ class Optimizer:
         opt_pp = -1
         total_time = 1<<10
 
+
         # p stands for partition point
         for pp in range(layer_number):
             device_exe_time = sum(device_layers_exe_time[:pp+1])
@@ -51,7 +52,33 @@ class Optimizer:
                 total_time = cur_total_time
                 opt_pp = pp
 
-        return (self.default_branch_id, opt_pp, 0)
+        return (self.default_branch_id, opt_pp, 32)
+
+    def tranverse(self, B):
+        """
+        tranverse to get optimal configuration under specific bandwidth
+        :param B: current bandwidth
+        :return: optimal partition configuration (b, p, c)
+        """
+        branches = [b for b in range(self.model_config.branch_number)]
+        quantization_bits = self.quantization_bits
+        layers_each_branch = [len(branch_info) for branch_info in self.model_config.branches_info]
+
+        device_exe_times = self.device_time_predictor.each_branches_exe_time
+        server_exe_times = self.server_time_predictor.each_branches_exe_time
+        data_size_table = self.model_config.branches_output_data_size
+
+        for b in range(len(branches)-1, -1, -1):
+            for p in range(layers_each_branch[b]):
+                for c in quantization_bits:
+                    dev_exe_time = sum(device_exe_times[b][:p+1])
+                    svr_exe_time = sum(server_exe_times[b][p+1:])
+                    trans_time = data_size_table[b][p] / (B*32/c)
+
+                    if dev_exe_time > self.interval or svr_exe_time > self.interval or trans_time > self.interval:
+                        continue
+                    return b, p, c
+        return -1, -1, -1
 
     def ILP(self, B):
         '''
@@ -111,7 +138,7 @@ class Optimizer:
         to reduce sampling rate.
         """
 
-        b, p, c = self.ILP(B)
+        b, p, c = self.tranverse(B)
         if b == -1:
             print('You have to reduce sampling rate.')
             return -1, -1, -1
@@ -133,7 +160,7 @@ class Optimizer:
         Returns:
             exit point and partition point
         """
-        layer_numbers = [len(branch) for branch in self.branches]
+        layer_numbers = [len(branch.layers) for branch in self.branches]
         device_exe_time = self.device_time_predictor.each_branches_exe_time
         server_exe_time = self.server_time_predictor.each_branches_exe_time
         data_size_table = self.model_config.branches_output_data_size
